@@ -1,0 +1,61 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <meta http-equiv="X-UA-Compatible" content="ie=edge">
+  <title>Search</title>
+</head>
+
+<body>
+  <main>
+    <label for="val">Введите искомое число: </label>
+    <input type="number" name="val" id="val">
+    <br>
+    <label for="arr">Введите массив: </label>
+    <input type="text" name="arr" id="arr" placeholder="num,num,num,num,...">
+    <br>
+    <input type="submit" id="go" value="Найти!">
+    <br>
+    <div id="result"></div>
+  </main>
+  <script>
+    let go = document.querySelector('#go');
+    go.addEventListener('click', function () {
+      event.preventDefault();
+      const valHTML = parseInt(document.querySelector('#val').value);
+      const arrHTML = document.querySelector('#arr').value.split(',').map(Number).filter(Boolean);
+      const resID = document.querySelector('#result');
+      // бинарный поиск с предварительной сортировкой
+      function search(val, arr) {
+        const newArr = arr.sort(function (a, b) {
+          return a - b;
+        });
+        let firstIndex = 0; // первый индекс массива
+        let lastIndex = newArr.length - 1; // последний индекс массива
+        let position; // искомая позиция числа
+        let found = false; // статус поиска
+        let mid; // середина массива
+
+        while (found === false && firstIndex <= lastIndex) {
+          mid = Math.floor((firstIndex + lastIndex) / 2);
+          if (newArr[mid] == val) {
+            found = true;
+            position = mid;
+          } else if (newArr[mid] > val) { // значение в нижней части массива
+            lastIndex = mid - 1;
+          } else {  // значение в верхней части массива
+            firstIndex = mid + 1;
+          }
+        }
+
+        let res = position >= 0 ? position : 'Элемент отсутствует';
+        return resID.innerHTML = `<p>Результат: ${res}</p>`;
+      }
+      search(valHTML, arrHTML);
+    });
+  </script>
+</body>
+
+</html>
