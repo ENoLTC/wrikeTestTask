@@ -24,4 +24,6 @@ const search = (val, arr) => {
   return position ? position : 'Элемент отсутствует';
 }
 
-search(1, [3, 6, 7, 2, 9, 1])
+// Тест подтверждающий корректную работу функции
+const test = (arr, val, res) => search(val, arr) == res;
+test([3, 6, 7, 2, 9, 1], 3, 2);
