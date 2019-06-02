@@ -1,20 +1,7 @@
 window.onload = function () {
-  const winPositions = [ //Выигрышные комбинации
-    [0, 1, 2],
-    [3, 4, 5],
-    [6, 7, 8],
-    [0, 3, 6],
-    [1, 4, 7],
-    [2, 5, 8],
-    [0, 4, 8],
-    [2, 4, 6]
-  ];
 
-  let player = 'user';
-  const field = Array.from(document.querySelectorAll('.cell'));
-  const id = (cell) => Number.parseInt(cell.id); // ID ячейки в числовом формате
-  const emptyCells = () => field.filter(cell => cell.innerText === '');
-  const sameCells = (cellsArr) => cellsArr.every(cell => cell.innerText === cellsArr[0].innerText && cell.innerText !== '');  // Проверка на одинаковое содержание в массиве ячеек
+
+
 
   const turn = (index, letter) => { // Ставит крестик/нолик, удаляет обработчик с ячейки
     const element = document.getElementById(index);
