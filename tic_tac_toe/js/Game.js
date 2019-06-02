@@ -4,7 +4,8 @@ export default class TicTacToe extends Player {
   constructor() {
     super();
     this.player = 'user';
-    this.winPositions = [ //Выигрышные комбинации
+    // Выигрышные комбинации
+    this.winPositions = [
       [0, 1, 2],
       [3, 4, 5],
       [6, 7, 8],
@@ -18,21 +19,21 @@ export default class TicTacToe extends Player {
     this.button = document.querySelector('.restart-btn').addEventListener('click', this.restartGame);
   }
 
-  emptyCells = () => {
-    return this.field.filter(cell => cell.innerText === '');
-  }
+  emptyCells = () => this.field.filter(cell => cell.innerText === '')
 
-  sameCells = (cellsArr) => { // Проверка на одинаковое содержание в массиве ячеек
-    return cellsArr.every(cell => cell.innerText === cellsArr[0].innerText && cell.innerText !== '');
-  }
+  // Проверка на одинаковое содержание в массиве ячеек
+  sameCells = (cellsArr) => cellsArr.every(cell => cell.innerText === cellsArr[0].innerText && cell.innerText !== '');
 
-  winCheck = () => { // Проверка комбинаций. Перебирается массив выигрышных комбинаций
+  // Проверка комбинаций. Перебирается массив выигрышных комбинаций
+  winCheck = () => {
     let victory = false;
 
     this.winPositions.forEach(arr => {
       const fieldCopy = this.field;
-      const winCombination = [fieldCopy[arr[0]], fieldCopy[arr[1]], fieldCopy[arr[2]]]; // Составление массива из текущих результатов игры по шаблону выигрышного массива
-      if (this.sameCells(winCombination)) { // Проверка на соответствие выигрышному варианту
+      // Составление массива из текущих результатов игры по шаблону выигрышного массива
+      const winCombination = [fieldCopy[arr[0]], fieldCopy[arr[1]], fieldCopy[arr[2]]];
+      // Проверка на соответствие выигрышному варианту
+      if (this.sameCells(winCombination)) {
         victory = true;
         this.endGame(winCombination);
       }
@@ -55,7 +56,10 @@ export default class TicTacToe extends Player {
       cell.innerText = '';
       cell.style.cursor = 'pointer';
     });
-    this.enableField();
+    if (document.querySelector('.result-text') !== null) {
+      document.querySelector('.result-text').remove();
+    }
+    return this.enableField();
   }
 
   endGame = (winSeq) => {

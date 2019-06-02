@@ -1,41 +1,88 @@
 window.onload = function () {
+  //Выигрышные комбинации
+  const winPositions = [
+    [0, 1, 2],
+    [3, 4, 5],
+    [6, 7, 8],
+    [0, 3, 6],
+    [1, 4, 7],
+    [2, 5, 8],
+    [0, 4, 8],
+    [2, 4, 6]
+  ];
 
+  let player = 'user';
+  const field = Array.from(document.querySelectorAll('.cell'));
+  const id = (cell) => {
+    if (cell === undefined)
+      return disableField();
+    return Number.parseInt(cell.id);
+  }
+  const emptyCells = () => field.filter(cell => cell.innerText === '');
+  // Проверка на одинаковое содержание в массиве ячеек
+  const sameCells = (cellsArr) => cellsArr.every(cell => cell.innerText === cellsArr[0].innerText && cell.innerText !== '');
 
-
-
-  const turn = (index, letter) => { // Ставит крестик/нолик, удаляет обработчик с ячейки
+  // Ставит крестик/нолик, удаляет обработчик с ячейки
+  const turn = (index, letter) => {
     const element = document.getElementById(index);
+    if (field[index] === undefined) {
+      const tie = document.createElement('div');
+      tie.innerHTML = '<p>Ничья!</p>';
+      tie.className = 'result-text';
+      document.querySelector('.restart-btn').parentNode.insertBefore(tie, document.querySelector('.restart-btn'));
+      return disableField();
+    }
 
     field[index].innerText = letter;
     element.removeEventListener('click', clickOnCell);
     element.style.cursor = 'no-drop';
   }
-  const aiChoise = () => id(emptyCells()[Math.floor(Math.random() * emptyCells().length)]); // Компьютер выбирает ID случайной пустой ячейки
-  const aiTurn = () => { // Ход компьютера. Проверка на выигрышную комбинацию. Если true, тогда снимаются все обработчики
+
+  // Компьютер выбирает ID случайной пустой ячейки
+  const aiChoise = () => id(emptyCells()[Math.floor(Math.random() * emptyCells().length)]);
+  // Ход компьютера. Проверка на выигрышную комбинацию. Если true, тогда снимаются все обработчики
+  const aiTurn = () => {
     player = 'ai';
     setTimeout(() => {
       turn(aiChoise(), 'O');
-      if (winCheck())
-        disableField();
-      player = 'user';
+      if (winCheck()) {
+        const lose = document.createElement('div');
+        lose.innerHTML = '<p>Вы проиграли!</p>';
+        lose.className = 'result-text';
+        document.querySelector('.restart-btn').parentNode.insertBefore(lose, document.querySelector('.restart-btn'));
+        player = 'user';
+        return disableField();
+      }
+      return player = 'user';
     }, 1000);
   }
 
-  const clickOnCell = (e) => { // Ход игрока. Передает ход компьютеру, если нет выигрышной комбинации
+  // Ход игрока. Передает ход компьютеру, если нет выигрышной комбинации
+  const clickOnCell = (e) => {
     if (player === 'user') {
       turn(id(e.target), 'X');
-      if (!winCheck())
-        aiTurn();
+      if (!winCheck()) {
+        return aiTurn();
+      } else {
+        const win = document.createElement('div');
+        win.innerHTML = '<p>Победа!</p>';
+        win.className = 'result-text';
+        document.querySelector('.restart-btn').parentNode.insertBefore(win, document.querySelector('.restart-btn'));
+        return disableField();
+      }
     }
   };
 
-  const winCheck = () => { // Проверка комбинаций. Перебирается массив выигрышных комбинаций
+  // Проверка комбинаций. Перебирается массив выигрышных комбинаций
+  const winCheck = () => {
     let victory = false;
 
     winPositions.forEach(arr => {
       const fieldCopy = field;
-      const winCombination = [fieldCopy[arr[0]], fieldCopy[arr[1]], fieldCopy[arr[2]]]; // Составление массива из текущих результатов игры по шаблону выигрышного массива
-      if (sameCells(winCombination)) { // Проверка на соответствие выигрышному варианту
+      // Составление массива из текущих результатов игры по шаблону выигрышного массива
+      const winCombination = [fieldCopy[arr[0]], fieldCopy[arr[1]], fieldCopy[arr[2]]];
+      // Проверка на соответствие выигрышному варианту
+      if (sameCells(winCombination)) {
         victory = true;
         endGame(winCombination);
       }
@@ -57,7 +104,9 @@ window.onload = function () {
       cell.innerText = '';
       cell.style.cursor = 'pointer';
     });
-    startGame();
+    if (document.querySelector('.result-text') !== null)
+      document.querySelector('.result-text').remove();
+    enableField();
   }
 
   const endGame = (winSeq) => {

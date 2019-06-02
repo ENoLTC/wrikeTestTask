@@ -85,3 +85,8 @@ h1 {
 .win {
   color: #F00;
 }
+
+.result-text {
+  margin-bottom: 30px;
+  font-size: 30px;
+}
